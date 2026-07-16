@@ -41,7 +41,7 @@
 
 html {
   background: var(--green-dark);
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
   scroll-padding-top: 40px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

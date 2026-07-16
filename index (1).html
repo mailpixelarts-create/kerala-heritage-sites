@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agarland Developers | Premium Resort & Plantation Project</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #030e09;
+            --bg-secondary: #061c13;
+            --bg-card: rgba(11, 44, 31, 0.65);
+            --bg-card-hover: rgba(16, 62, 44, 0.85);
+            --gold-primary: #d4af37;
+            --gold-light: #f3e5ab;
+            --gold-dark: #aa8c2c;
+            --gold-glow: rgba(212, 175, 55, 0.35);
+            --text-main: #fdfbf7;
+            --text-muted: #b8c8c0;
+            --border-color: rgba(212, 175, 55, 0.22);
+            --font-serif: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+            --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: auto;
+            font-size: 16px;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--gold-dark);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gold-primary);
+        }
+
+        /* Preloader */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #020805;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .preloader-logo-svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 24px;
+            animation: pulseGlow 2s infinite ease-in-out;
+        }
+        .preloader-title {
+            font-family: var(--font-serif);
+            font-size: 1.8rem;
+            color: var(--gold-light);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+        .preloader-bar {
+            width: 240px;
+            height: 2px;
+            background: rgba(212, 175, 55, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .preloader-bar-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: var(--gold-primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.4)); }
+            50% { transform: scale(1.06); filter: drop-shadow(0 0 22px rgba(212, 175, 55, 0.85)); }
+        }
+
+        /* Ambient Canvas */
+        #ambient-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(3, 14, 9, 0.88);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--border-color);
+            transition: padding 0.3s ease, background 0.3s ease;
+        }
+        .navbar.scrolled {
+            padding: 14px 6%;
+            background: rgba(3, 14, 9, 0.96);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+        }
+        .nav-logo-svg {
+            height: 42px;
+            width: 42px;
+        }
+        .nav-brand-text {
+            font-family: var(--font-serif);
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--gold-light);
+            letter-spacing: 2px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+            align-items: center;
+        }
+        .nav-link {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover {
+            color: var(--gold-light);
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background: var(--gold-primary);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .btn-gold {
+            background: linear-gradient(135deg, #f3e5ab 0%, #d4af37 50%, #aa8c2c 100%);
+            color: #030e09;
+            padding: 12px 26px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(212, 175, 55, 0.5);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--gold-light);
+            border: 1px solid var(--gold-primary);
+            padding: 12px 26px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-outline:hover {
+            background: rgba(212, 175, 55, 0.15);
+            border-color: var(--gold-light);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section (Pure CSS & Geometric Grid - ZERO PDF IMAGES) */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 150px 6% 90px;
+            background: 
+                radial-gradient(circle at 80% 20%, rgba(212, 175, 55, 0.16) 0%, transparent 45%),
+                radial-gradient(circle at 20% 80%, rgba(15, 77, 56, 0.35) 0%, transparent 50%),
+                linear-gradient(135deg, #020805 0%, #051a12 50%, #03100b 100%);
+            z-index: 2;
+            overflow: hidden;
+        }
+        .hero-mesh-grid {
+            position: absolute;
+            top: 0;
+            right: -5%;
+            width: 55%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.15;
+            background-image: 
+                linear-gradient(to right, rgba(212, 175, 55, 0.4) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(212, 175, 55, 0.4) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(circle at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 70%);
+            -webkit-mask-image: radial-gradient(circle at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 70%);
+        }
+        .hero-decorative-circle {
+            position: absolute;
+            right: 8%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 480px;
+            height: 480px;
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 50%;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .hero-decorative-circle::before {
+            content: '';
+            width: 380px;
+            height: 380px;
+            border: 1px dashed rgba(212, 175, 55, 0.3);
+            border-radius: 50%;
+            animation: rotateSlow 40s linear infinite;
+        }
+        .hero-decorative-svg {
+            position: absolute;
+            width: 240px;
+            height: 240px;
+            opacity: 0.85;
+            filter: drop-shadow(0 0 25px rgba(212, 175, 55, 0.4));
+        }
+
+        @keyframes rotateSlow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .hero-content {
+            max-width: 760px;
+            position: relative;
+            z-index: 3;
+        }
+        .luxury-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 18px;
+            background: rgba(212, 175, 55, 0.12);
+            border: 1px solid var(--gold-primary);
+            border-radius: 50px;
+            color: var(--gold-light);
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+            backdrop-filter: blur(8px);
+        }
+        .luxury-badge span {
+            color: var(--gold-primary);
+        }
+        .hero-title {
+            font-family: var(--font-serif);
+            font-size: 4.6rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            color: #ffffff;
+        }
+        .hero-title span {
+            background: linear-gradient(135deg, #fdfbf7 0%, #f3e5ab 50%, #d4af37 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            line-height: 1.8;
+            font-weight: 300;
+        }
+        .hero-actions {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        /* Hero Stats Bar */
+        .stats-bar {
+            position: relative;
+            z-index: 4;
+            margin-top: -60px;
+            padding: 0 6%;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 24px;
+            background: rgba(6, 28, 19, 0.94);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 36px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+        }
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            border-right: 1px solid rgba(212, 175, 55, 0.15);
+        }
+        .stat-item:last-child {
+            border-right: none;
+        }
+        .stat-value {
+            font-family: var(--font-serif);
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--gold-light);
+            margin-bottom: 6px;
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        /* Section Commons */
+        .section {
+            padding: 110px 6%;
+            position: relative;
+            z-index: 2;
+        }
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 70px;
+        }
+        .section-tag {
+            color: var(--gold-primary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            display: block;
+        }
+        .section-title {
+            font-family: var(--font-serif);
+            font-size: 3.2rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        .section-desc {
+            color: var(--text-muted);
+            font-size: 1.15rem;
+            line-height: 1.7;
+        }
+
+        /* Concept Section */
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 40px;
+            align-items: stretch;
+        }
+        .concept-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 48px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.4s ease, border-color 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .concept-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--gold-light);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.5);
+        }
+        .concept-icon {
+            width: 64px;
+            height: 64px;
+            background: rgba(212, 175, 55, 0.12);
+            border: 1px solid var(--gold-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 28px;
+        }
+        .concept-icon svg {
+            width: 32px;
+            height: 32px;
+            fill: var(--gold-light);
+        }
+        .concept-card h3 {
+            font-family: var(--font-serif);
+            font-size: 2rem;
+            color: var(--gold-light);
+            margin-bottom: 16px;
+        }
+        .concept-card p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            line-height: 1.8;
+            margin-bottom: 24px;
+        }
+        .concept-list {
+            list-style: none;
+            margin-top: auto;
+        }
+        .concept-list li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+        .concept-list li svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--gold-primary);
+            flex-shrink: 0;
+        }
+
+        /* Botanical Asset Showcase (Tabs - Pure Vector Layout) */
+        .botanical-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr 1.3fr;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+        .botanical-visual {
+            background: radial-gradient(circle at center, rgba(212, 175, 55, 0.15) 0%, transparent 70%), linear-gradient(135deg, #04140e 0%, #082a1d 100%);
+            border-right: 1px solid var(--border-color);
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .botanical-svg-wrap {
+            width: 240px;
+            height: 240px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.35));
+            transition: transform 0.5s ease;
+        }
+        .botanical-visual:hover .botanical-svg-wrap {
+            transform: scale(1.05);
+        }
+        .botanical-content {
+            padding: 56px;
+        }
+        .tabs-header {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 36px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            padding-bottom: 16px;
+        }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-family: var(--font-serif);
+            font-size: 1.4rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 8px 4px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .tab-btn.active {
+            color: var(--gold-light);
+        }
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -17px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gold-primary);
+        }
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        .tab-pane.active {
+            display: block;
+        }
+        .species-stat-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 28px 0;
+        }
+        .species-stat {
+            background: rgba(3, 14, 9, 0.85);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 22px;
+            border-radius: 10px;
+        }
+        .species-stat h4 {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+        }
+        .species-stat div {
+            font-family: var(--font-serif);
+            font-size: 1.8rem;
+            color: var(--gold-light);
+            font-weight: 700;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Financial Plans Section */
+        .plans-toggle {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 50px;
+        }
+        .toggle-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 6px;
+            border-radius: 50px;
+            display: inline-flex;
+        }
+        .toggle-btn {
+            padding: 14px 36px;
+            border-radius: 50px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .toggle-btn.active {
+            background: linear-gradient(135deg, #f3e5ab 0%, #d4af37 100%);
+            color: #030e09;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+        }
+        .plan-view {
+            display: none;
+        }
+        .plan-view.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* Timeline Card */
+        .timeline-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            position: relative;
+        }
+        .timeline-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 40px 30px;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+        .timeline-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--gold-light);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+        }
+        .timeline-badge {
+            position: absolute;
+            top: -16px;
+            left: 30px;
+            background: var(--gold-primary);
+            color: #030e09;
+            font-weight: 700;
+            font-size: 0.8rem;
+            padding: 6px 16px;
+            border-radius: 50px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        .timeline-title {
+            font-family: var(--font-serif);
+            font-size: 1.6rem;
+            color: var(--gold-light);
+            margin: 16px 0 12px;
+        }
+        .timeline-amount {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 8px;
+            font-family: var(--font-serif);
+        }
+        .timeline-amount span {
+            font-size: 1rem;
+            color: var(--gold-primary);
+            font-family: var(--font-sans);
+            font-weight: 600;
+        }
+        .timeline-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* Share Plan Banner (Pure Geometric CSS Gradient) */
+        .share-banner {
+            background: radial-gradient(circle at 90% 50%, rgba(212, 175, 55, 0.18) 0%, transparent 60%), linear-gradient(135deg, #062217 0%, #0a3323 50%, #051d14 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 60px;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 40px;
+            align-items: center;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+        }
+        .share-price {
+            font-family: var(--font-serif);
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--gold-light);
+            margin: 16px 0;
+        }
+
+        /* Amenities Grid */
+        .amenities-filter {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 48px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            background: rgba(11, 44, 31, 0.5);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            color: var(--text-muted);
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--gold-primary);
+            color: #030e09;
+            border-color: var(--gold-primary);
+        }
+        .amenities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 30px;
+        }
+        .amenity-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 36px 28px;
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .amenity-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--gold-light);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.5);
+        }
+        .amenity-icon {
+            width: 56px;
+            height: 56px;
+            background: rgba(212, 175, 55, 0.12);
+            border: 1px solid var(--gold-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .amenity-icon svg {
+            width: 28px;
+            height: 28px;
+            fill: var(--gold-light);
+        }
+        .amenity-title {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            color: var(--text-main);
+        }
+        .amenity-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* SOTD Interactive Calculator */
+        .calculator-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 60px;
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 60px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+        }
+        .calc-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+        .calc-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--gold-light);
+            margin-bottom: 12px;
+            font-size: 1.05rem;
+        }
+        .calc-slider {
+            width: 100%;
+            height: 8px;
+            background: rgba(212, 175, 55, 0.2);
+            border-radius: 4px;
+            outline: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+        .calc-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: var(--gold-primary);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.8);
+        }
+        .calc-select, .calc-input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(3, 14, 9, 0.85);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 1rem;
+            font-family: var(--font-sans);
+            outline: none;
+        }
+        .calc-select:focus, .calc-input:focus {
+            border-color: var(--gold-light);
+        }
+        .calc-output-box {
+            background: linear-gradient(135deg, rgba(11, 44, 31, 0.85) 0%, rgba(3, 14, 9, 0.95) 100%);
+            border: 1px solid var(--gold-primary);
+            border-radius: 14px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .output-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+        }
+        .output-row:last-child {
+            border-bottom: none;
+        }
+        .output-label {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+        .output-value {
+            font-family: var(--font-serif);
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--gold-light);
+        }
+        .output-total .output-value {
+            font-size: 2.4rem;
+            color: #ffffff;
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+        }
+
+        /* VIP Consultation / Contact Modal */
+        .contact-section {
+            background: linear-gradient(to top, rgba(3, 14, 9, 1) 0%, rgba(6, 28, 19, 0.8) 100%);
+            padding: 120px 6%;
+            border-top: 1px solid var(--border-color);
+        }
+        .contact-form-box {
+            max-width: 750px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 50px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .form-group.full {
+            grid-column: span 2;
+        }
+        .form-group label {
+            font-size: 0.9rem;
+            color: var(--gold-light);
+            font-weight: 600;
+        }
+        .form-control {
+            padding: 14px 18px;
+            background: rgba(3, 14, 9, 0.85);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        .form-control:focus {
+            border-color: var(--gold-light);
+        }
+
+        /* Footer */
+        .footer {
+            background: #020805;
+            padding: 70px 6% 40px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+        }
+        .footer-logo-svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 20px;
+        }
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            list-style: none;
+            margin: 28px 0;
+            flex-wrap: wrap;
+        }
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+        .footer-links a:hover {
+            color: var(--gold-light);
+        }
+        .footer-copy {
+            color: #667870;
+            font-size: 0.85rem;
+            margin-top: 30px;
+        }
+
+        /* Reveal on scroll */
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-on-scroll.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .hero-title { font-size: 3.2rem; }
+            .botanical-container, .share-banner, .calculator-box { grid-template-columns: 1fr; }
+            .botanical-visual { border-right: none; border-bottom: 1px solid var(--border-color); }
+            .form-grid { grid-template-columns: 1fr; }
+            .form-group.full { grid-column: span 1; }
+            .nav-links { display: none; }
+            .hero-decorative-circle { display: none; }
+        }
+        @media (max-width: 600px) {
+            .hero-title { font-size: 2.5rem; }
+            .section-title { font-size: 2.2rem; }
+            .concept-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Preloader -->
+    <div id="preloader">
+        <svg class="preloader-logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M50 10L85 75H65L50 45L35 75H15L50 10Z" stroke="#d4af37" stroke-width="4" stroke-linejoin="round"/>
+            <path d="M50 45L65 75H50V45Z" fill="#d4af37"/>
+        </svg>
+        <div class="preloader-title">Agarland Developers</div>
+        <div class="preloader-bar">
+            <div class="preloader-bar-fill" id="preloader-fill"></div>
+        </div>
+    </div>
+
+    <!-- Ambient Canvas -->
+    <canvas id="ambient-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <a href="#" class="nav-brand">
+            <svg class="nav-logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 10L85 75H65L50 45L35 75H15L50 10Z" stroke="#d4af37" stroke-width="6" stroke-linejoin="round"/>
+                <path d="M50 45L65 75H50V45Z" fill="#d4af37"/>
+            </svg>
+            <span class="nav-brand-text">AGARLAND</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="#concept" class="nav-link">Vision</a></li>
+            <li><a href="#botanical" class="nav-link">Plantations</a></li>
+            <li><a href="#returns" class="nav-link">Return Structure</a></li>
+            <li><a href="#amenities" class="nav-link">Masterplan</a></li>
+            <li><a href="#calculator" class="nav-link">ROI Calculator</a></li>
+        </ul>
+        <a href="#contact" class="btn-gold">
+            <span>Schedule Visit</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+    </nav>
+
+    <!-- Hero Section (Zero PDF Images - Pure Geometric Luxury) -->
+    <section class="hero">
+        <div class="hero-mesh-grid"></div>
+        <div class="hero-decorative-circle">
+            <svg class="hero-decorative-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 10L85 75H65L50 45L35 75H15L50 10Z" stroke="#d4af37" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M50 45L65 75H50V45Z" fill="rgba(212, 175, 55, 0.4)"/>
+            </svg>
+        </div>
+        <div class="hero-content reveal-on-scroll">
+            <div class="luxury-badge">
+                <span>✦</span> Registered 25-Cent Plots & Luxury Cottages <span>✦</span>
+            </div>
+            <h1 class="hero-title">A Lifetime of <span>Returns & Luxury.</span></h1>
+            <p class="hero-subtitle">
+                Own an individual registered 25-cent private plot with a custom-crafted 550–600 Sq. Ft. Kerala-style luxury resort cottage, complemented by 275 high-value Agarwood & Sandalwood trees under professional management.
+            </p>
+            <div class="hero-actions">
+                <a href="#returns" class="btn-gold">Explore Investment Plans</a>
+                <a href="#calculator" class="btn-outline">Calculate Your Yield</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar reveal-on-scroll">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-value">₹1.10 Cr</div>
+                <div class="stat-label">Total Investment</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">₹1.95 Cr</div>
+                <div class="stat-label">Projected Tree Value</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">275 Trees</div>
+                <div class="stat-label">Agarwood & Sandalwood</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">600 Sq.Ft</div>
+                <div class="stat-label">Luxury Resort Cottage</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">100% Legal</div>
+                <div class="stat-label">Registered Title Ownership</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 1: Concept & Dual-Wealth Vision -->
+    <section class="section" id="concept">
+        <div class="section-header reveal-on-scroll">
+            <span class="section-tag">Dual Wealth Architecture</span>
+            <h2 class="section-title">Invest in Nature. Invest in the Future.</h2>
+            <p class="section-desc">
+                Agarland Developers is committed to creating a lasting green legacy by uniting Kerala heritage hospitality with high-yield agro-forestry. Our model secures your capital in tangible real estate while generating compounding biological returns.
+            </p>
+        </div>
+
+        <div class="concept-grid">
+            <div class="concept-card reveal-on-scroll">
+                <div class="concept-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                </div>
+                <h3>The Real Estate Asset</h3>
+                <p>
+                    Every ₹1.10 Crore investment grants you an individual registered 25-cent plot (approx. 10,890 Sq. Ft.) with clear freehold title ownership, paired with an exquisitely crafted Kerala-style resort cottage.
+                </p>
+                <ul class="concept-list">
+                    <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> 25 Cents Registered Private Property</li>
+                    <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> 550–600 Sq. Ft. Luxury Kerala Cottage</li>
+                    <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Freehold Individual Title Registration</li>
+                    <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Access to World-Class Common Amenities</li>
+                </ul>
+            </div>
+
+            <div class="concept-card reveal-on-scroll" style="animation-delay: 0.2s;">
+                <div class="concept-icon">
+                    <svg viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 4 13C4 8.5 8.5 4 12 2c3.5 2 8 6.5 8 11a7 7 0 0 1-7 7h-2zm1-16.16C9.28 5.6 6 8.94 6 13a5 5 0 0 0 5 5h2a5 5 0 0 0 5-5c0-4.06-3.28-7.4-6-9.16z"/></svg>
+                </div>
+                <h3>The Botanical Asset</h3>
+                <p>
+                    Within your private plot and the surrounding managed ecosystem, our agronomists cultivate 275 high-value trees that naturally appreciate into multi-crore biological assets over their maturity horizon.
+                </p>
+                <ul class="concept-list">
+                    <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> 225 Agarwood Trees (@ ₹20,000 / Tree maturity)</li>
+                    <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> 50 Sandalwood Trees (@ ₹3,00,000 / Tree maturity)</li>
+                    <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Complete Scientific Plantation Development</li>
+                    <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Zero Day-to-Day Maintenance Burden for Owner</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Botanical Asset Deep Dive (Pure Vector & SVG Showcase) -->
+    <section class="section" id="botanical">
+        <div class="section-header reveal-on-scroll">
+            <span class="section-tag">Biological Appreciation</span>
+            <h2 class="section-title">The World's Most Precious Trees</h2>
+            <p class="section-desc">
+                With over 11,000 Agarwood and 3,000 Sandalwood trees across the master plantation, Agarland cultivates the world's most sought-after aromatic hardwoods under expert horticultural oversight.
+            </p>
+        </div>
+
+        <div class="botanical-container reveal-on-scroll">
+            <div class="botanical-visual">
+                <div class="botanical-svg-wrap" id="botanical-art">
+                    <!-- Dynamic SVG inserted via JS upon tab switch -->
+                    <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="100" cy="100" r="85" stroke="#d4af37" stroke-width="2" stroke-dasharray="8 8"/>
+                        <circle cx="100" cy="100" r="65" stroke="#d4af37" stroke-width="1.5" opacity="0.6"/>
+                        <path d="M100 35C100 35 135 65 135 100C135 120 120 135 100 135C80 135 65 120 65 100C65 65 100 35 100 35Z" fill="rgba(212, 175, 55, 0.25)" stroke="#d4af37" stroke-width="2.5"/>
+                        <path d="M100 65V125M85 95L100 80L115 95" stroke="#f3e5ab" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div style="margin-top: 24px; font-family: var(--font-serif); font-size: 1.3rem; color: var(--gold-light); text-align: center;" id="botanical-art-label">Agarwood (Oud) Specimen</div>
+            </div>
+            <div class="botanical-content">
+                <div class="tabs-header">
+                    <button class="tab-btn active" onclick="switchTab('agarwood', this)">Agarwood (Oud)</button>
+                    <button class="tab-btn" onclick="switchTab('sandalwood', this)">Indian Sandalwood</button>
+                </div>
+
+                <!-- Tab 1: Agarwood -->
+                <div class="tab-pane active" id="agarwood">
+                    <h3 style="font-family: var(--font-serif); font-size: 2rem; color: var(--text-main); margin-bottom: 12px;">The Liquid Gold of Perfumery</h3>
+                    <p style="color: var(--text-muted); font-size: 1.05rem; line-height: 1.8;">
+                        Agarwood trees are universally renowned for producing *Oud*—the world's most fragrant, dense, and precious resin. Due to dwindling natural supplies and soaring global demand across luxury haute perfumery, traditional medicine, and ceremonial incense, sustainably farmed Agarwood commands exceptional valuations.
+                    </p>
+                    <div class="species-stat-box">
+                        <div class="species-stat">
+                            <h4>Allocation Per Plot</h4>
+                            <div>225 Trees</div>
+                        </div>
+                        <div class="species-stat">
+                            <h4>Projected Value</h4>
+                            <div>₹45,00,000</div>
+                        </div>
+                    </div>
+                    <ul class="concept-list">
+                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> 11,000 Total Plants Cultivated Across Project</li>
+                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> High-Yield Inoculation & Resin Extraction Oversight</li>
+                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Estimated Maturity Valuation: ₹20,000 per Tree</li>
+                    </ul>
+                </div>
+
+                <!-- Tab 2: Sandalwood -->
+                <div class="tab-pane" id="sandalwood">
+                    <h3 style="font-family: var(--font-serif); font-size: 2rem; color: var(--text-main); margin-bottom: 12px;">The Sacred Aromatic Hardwood</h3>
+                    <p style="color: var(--text-muted); font-size: 1.05rem; line-height: 1.8;">
+                        Indian Sandalwood (*Santalum album*) is globally celebrated for its rich, fragrant heartwood and pure essential oils. Protected by strict quality standards and valued across cosmetics, pharmaceuticals, and luxury woodworking, Sandalwood represents one of the most reliable multi-generational wealth accumulators.
+                    </p>
+                    <div class="species-stat-box">
+                        <div class="species-stat">
+                            <h4>Allocation Per Plot</h4>
+                            <div>50 Trees</div>
+                        </div>
+                        <div class="species-stat">
+                            <h4>Projected Value</h4>
+                            <div>₹1.50 Crore</div>
+                        </div>
+                    </div>
+                    <ul class="concept-list">
+                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> 3,000 Total Plants Cultivated Across Project</li>
+                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Government-Compliant Tagging & Scientific Harvest</li>
+                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Estimated Maturity Valuation: ₹3,00,000 per Tree</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Return Structure & Financial Plans -->
+    <section class="section" id="returns">
+        <div class="section-header reveal-on-scroll">
+            <span class="section-tag">Financial Architecture</span>
+            <h2 class="section-title">Where Your Investment Grows</h2>
+            <p class="section-desc">
+                Choose the investment tier that aligns with your portfolio goals. Enjoy immediate interim cash flow from resort operations along with multi-crore terminal timber payouts at harvest.
+            </p>
+        </div>
+
+        <div class="plans-toggle reveal-on-scroll">
+            <div class="toggle-container">
+                <button class="toggle-btn active" onclick="switchPlan('full-plan', this)">Full Property Package (₹1.10 Cr)</button>
+                <button class="toggle-btn" onclick="switchPlan('share-plan', this)">Share Investment Plan (₹1.10 Lakh)</button>
+            </div>
+        </div>
+
+        <!-- Plan 1: Full Package -->
+        <div class="plan-view active" id="full-plan">
+            <div class="timeline-grid">
+                <div class="timeline-card reveal-on-scroll">
+                    <span class="timeline-badge">1st Year</span>
+                    <h3 class="timeline-title">Grace & Development</h3>
+                    <div class="timeline-amount">Grace Period <span>Post-Registration</span></div>
+                    <p class="timeline-desc">
+                        Following your individual property deed registration, our engineering and botanical teams initialize your 25-cent plot, finish your luxury Kerala cottage, and root all 275 saplings.
+                    </p>
+                </div>
+
+                <div class="timeline-card reveal-on-scroll" style="animation-delay: 0.2s;">
+                    <span class="timeline-badge">2nd Year</span>
+                    <h3 class="timeline-title">Quarterly Cash Flow</h3>
+                    <div class="timeline-amount">₹45,000 <span>Every 3 Months</span></div>
+                    <p class="timeline-desc">
+                        Enjoy interim returns from the resort's operational revenue pool. You receive ₹45,000 paid out quarterly (totaling ₹1,80,000 for the year) while your plantation matures.
+                    </p>
+                </div>
+
+                <div class="timeline-card reveal-on-scroll" style="animation-delay: 0.4s;">
+                    <span class="timeline-badge">3rd Year Onwards</span>
+                    <h3 class="timeline-title">Monthly Cash Flow</h3>
+                    <div class="timeline-amount">₹15,000 <span>Every Month</span></div>
+                    <p class="timeline-desc">
+                        As the resort ecosystem stabilizes into steady occupancy, your interim returns transition into a reliable monthly income stream of ₹15,000 transferred directly to your account.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Terminal Harvest Callout -->
+            <div style="margin-top: 40px; background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(11, 44, 31, 0.9) 100%); border: 1px solid var(--gold-primary); border-radius: 16px; padding: 48px; text-align: center;" class="reveal-on-scroll">
+                <span class="section-tag">Long Term Maturity Horizon</span>
+                <h3 style="font-family: var(--font-serif); font-size: 2.5rem; color: #ffffff; margin: 12px 0;">Total Plantation Value at Maturity: <span style="color: var(--gold-light);">₹1.95 Crore</span></h3>
+                <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 750px; margin: 0 auto 24px;">
+                    Comprises 225 Agarwood trees valued at ₹45 Lakhs + 50 Sandalwood trees valued at ₹1.50 Crore. This biological harvest payout is entirely in addition to your retained freehold ownership of the underlying 25-cent plot and luxury cottage!
+                </p>
+                <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-top: 24px;">
+                    <div style="background: rgba(3,14,9,0.85); padding: 16px 28px; border-radius: 8px; border: 1px solid rgba(212,175,55,0.3);">
+                        <div style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase;">Property Asset Value</div>
+                        <div style="font-family: var(--font-serif); font-size: 1.5rem; color: var(--gold-light); font-weight: 700;">₹1.00 Crore</div>
+                    </div>
+                    <div style="background: rgba(3,14,9,0.85); padding: 16px 28px; border-radius: 8px; border: 1px solid rgba(212,175,55,0.3);">
+                        <div style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase;">Common Amenities Fund</div>
+                        <div style="font-family: var(--font-serif); font-size: 1.5rem; color: var(--gold-light); font-weight: 700;">₹10 Lakhs</div>
+                    </div>
+                    <div style="background: rgba(3,14,9,0.85); padding: 16px 28px; border-radius: 8px; border: 1px solid rgba(212,175,55,0.3);">
+                        <div style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase;">Total Initial Package</div>
+                        <div style="font-family: var(--font-serif); font-size: 1.5rem; color: #ffffff; font-weight: 700;">₹1.10 Crore</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Plan 2: Share Plan (Pure Geometric CSS Gradient) -->
+        <div class="plan-view" id="share-plan">
+            <div class="share-banner reveal-on-scroll">
+                <div>
+                    <span class="section-tag">Accessible Portfolio Diversification</span>
+                    <h3 style="font-family: var(--font-serif); font-size: 2.8rem; color: #ffffff; line-height: 1.2;">Share Investment Plan</h3>
+                    <p style="color: var(--text-muted); font-size: 1.1rem; margin: 16px 0 28px; line-height: 1.8;">
+                        Designed for investors who wish to participate directly in the high-growth resort revenue and common amenities fund without acquiring a full 25-cent land parcel. Each share grants pro-rata dividends, asset appreciation backing, and resort access privileges.
+                    </p>
+                    <ul class="concept-list">
+                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Low Capital Barrier Entry: ₹1,10,000 per Share</li>
+                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Pro-Rata Revenue Sharing from Common Amenities</li>
+                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Professional Institutional Asset Management</li>
+                    </ul>
+                </div>
+                <div style="background: rgba(3, 14, 9, 0.92); border: 1px solid var(--gold-primary); padding: 40px; border-radius: 12px; text-align: center;">
+                    <div style="color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px;">Share Price</div>
+                    <div class="share-price">₹1,10,000</div>
+                    <div style="color: var(--gold-light); font-weight: 600; margin-bottom: 24px;">Per Registered Share</div>
+                    <a href="#contact" class="btn-gold" style="width: 100%; justify-content: center;">Inquire For Shares</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: Masterplan & Amenities -->
+    <section class="section" id="amenities">
+        <div class="section-header reveal-on-scroll">
+            <span class="section-tag">Luxury Eco-Hospitality</span>
+            <h2 class="section-title">World-Class Common Amenities</h2>
+            <p class="section-desc">
+                Immerse yourself in a living ecosystem where holistic wellness, organic agriculture, and 5-star recreation meet across pristine green landscapes.
+            </p>
+        </div>
+
+        <div class="amenities-filter reveal-on-scroll">
+            <button class="filter-btn active" onclick="filterAmenities('all', this)">All Facilities</button>
+            <button class="filter-btn" onclick="filterAmenities('eco', this)">Eco & Farming</button>
+            <button class="filter-btn" onclick="filterAmenities('wellness', this)">Wellness & Dining</button>
+            <button class="filter-btn" onclick="filterAmenities('leisure', this)">Leisure & Security</button>
+        </div>
+
+        <div class="amenities-grid" id="amenities-container">
+            <div class="amenity-card reveal-on-scroll" data-category="eco">
+                <div class="amenity-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+                <h3 class="amenity-title">Honey Museum</h3>
+                <p class="amenity-desc">An interactive apiculture center showcasing organic honey production, bee conservation, and fresh forest honey tasting.</p>
+            </div>
+
+            <div class="amenity-card reveal-on-scroll" data-category="wellness" style="animation-delay: 0.1s;">
+                <div class="amenity-icon"><svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
+                <h3 class="amenity-title">Ayurvedic Wellness Centre</h3>
+                <p class="amenity-desc">Authentic Kerala holistic rejuvenation, therapeutic massages, herbal baths, and personalized wellness regimens.</p>
+            </div>
+
+            <div class="amenity-card reveal-on-scroll" data-category="wellness" style="animation-delay: 0.2s;">
+                <div class="amenity-icon"><svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg></div>
+                <h3 class="amenity-title">Multi-Cuisine Restaurant</h3>
+                <p class="amenity-desc">A farm-to-table culinary destination offering organic delicacies prepared using fresh ingredients harvested directly from our agricultural sectors.</p>
+            </div>
+
+            <div class="amenity-card reveal-on-scroll" data-category="leisure" style="animation-delay: 0.3s;">
+                <div class="amenity-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm14 14v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+                <h3 class="amenity-title">Event Space & Banquet</h3>
+                <p class="amenity-desc">Scenic open-air lawns and sophisticated indoor halls designed for corporate leadership retreats, destination weddings, and private gatherings.</p>
+            </div>
+
+            <div class="amenity-card reveal-on-scroll" data-category="leisure" style="animation-delay: 0.4s;">
+                <div class="amenity-icon"><svg viewBox="0 0 24 24"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/></svg></div>
+                <h3 class="amenity-title">Children's Park</h3>
+                <p class="amenity-desc">Nature-integrated playgrounds, adventure obstacles, and interactive learning zones where children safely connect with the outdoors.</p>
+            </div>
+
+            <div class="amenity-card reveal-on-scroll" data-category="wellness" style="animation-delay: 0.5s;">
+                <div class="amenity-icon"><svg viewBox="0 0 24 24"><path d="M2 12h20M2 18h20M2 6h20"/></svg></div>
+                <h3 class="amenity-title">Infinity Swimming Pool</h3>
+                <p class="amenity-desc">A temperature-controlled resort swimming pool complete with lounging cabanas and breathtaking panoramic views over the forest canopy.</p>
+            </div>
+
+            <div class="amenity-card reveal-on-scroll" data-category="eco" style="animation-delay: 0.6s;">
+                <div class="amenity-icon"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-2h2zm0-4h-2V7h2z"/></svg></div>
+                <h3 class="amenity-title">Fishing Spot & Aquatics</h3>
+                <p class="amenity-desc">Peaceful natural water bodies stocked with indigenous fish species for relaxing afternoon catch-and-release sport fishing.</p>
+            </div>
+
+            <div class="amenity-card reveal-on-scroll" data-category="eco" style="animation-delay: 0.7s;">
+                <div class="amenity-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 19h20L12 2z"/></svg></div>
+                <h3 class="amenity-title">Organic Farming Area</h3>
+                <p class="amenity-desc">Dedicated agricultural plots where organic herbs, exotic spices, and seasonal vegetables are grown sustainably without artificial pesticides.</p>
+            </div>
+
+            <div class="amenity-card reveal-on-scroll" data-category="leisure" style="animation-delay: 0.8s;">
+                <div class="amenity-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+                <h3 class="amenity-title">24/7 Security & CCTV</h3>
+                <p class="amenity-desc">Complete perimeter wall protection, solar pathway lighting, round-the-clock armed security patrols, and high-definition CCTV surveillance.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 5: SOTD Interactive Financial Simulator -->
+    <section class="section" id="calculator">
+        <div class="section-header reveal-on-scroll">
+            <span class="section-tag">Interactive Analytics</span>
+            <h2 class="section-title">Investment & Wealth Simulator</h2>
+            <p class="section-desc">
+                Customize your investment model below to project estimated interim resort revenue sharing and long-term botanical maturity valuations.
+            </p>
+        </div>
+
+        <div class="calculator-box reveal-on-scroll">
+            <div class="calc-inputs">
+                <div class="calc-group">
+                    <label>Select Investment Tier</label>
+                    <select class="calc-select" id="calc-tier" onchange="updateCalculator()">
+                        <option value="11000000">Full Property Package (₹1.10 Crore — 25 Cents + Cottage + 275 Trees)</option>
+                        <option value="110000">Share Investment Plan (₹1,10,000 per Share)</option>
+                    </select>
+                </div>
+
+                <div class="calc-group" id="shares-group" style="display: none;">
+                    <label>Number of Shares: <span id="shares-label" style="color: #fff;">1 Share (₹1.10 Lakhs)</span></label>
+                    <input type="range" class="calc-slider" id="calc-shares" min="1" max="20" step="1" value="1" oninput="updateCalculator()">
+                </div>
+
+                <div class="calc-group">
+                    <label>Holding Horizon (Interim Resort Revenue Years): <span id="years-label" style="color: #fff;">5 Years</span></label>
+                    <input type="range" class="calc-slider" id="calc-years" min="2" max="12" step="1" value="5" oninput="updateCalculator()">
+                </div>
+
+                <div class="calc-group">
+                    <label>Tree Maturity Market Scenario (At Harvest)</label>
+                    <select class="calc-select" id="calc-scenario" onchange="updateCalculator()">
+                        <option value="0.8">Conservative Market Assessment (80% of Projections)</option>
+                        <option value="1.0" selected>Target Brochure Projection (100% — ₹1.95 Crore per Plot)</option>
+                        <option value="1.2">Optimistic Premium Market Demand (120% of Projections)</option>
+                    </select>
+                </div>
+
+                <div style="padding: 20px; background: rgba(212, 175, 55, 0.1); border-left: 4px solid var(--gold-primary); border-radius: 4px;">
+                    <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6;">
+                        <strong style="color: var(--gold-light);">Note:</strong> Interim cash flows reflect year 2 quarterly payouts (₹1.80 Lakh/yr) plus year 3+ monthly payouts (₹1.80 Lakh/yr) per plot or pro-rata share.
+                    </p>
+                </div>
+            </div>
+
+            <div class="calc-output-box">
+                <div>
+                    <span class="section-tag" style="margin-bottom: 20px;">Financial Projections</span>
+                    <div class="output-row">
+                        <span class="output-label">Initial Capital Outlay</span>
+                        <span class="output-value" id="out-capital">₹1,10,000,000</span>
+                    </div>
+                    <div class="output-row">
+                        <span class="output-label">Estimated Interim Resort Returns</span>
+                        <span class="output-value" id="out-interim">₹7,20,000</span>
+                    </div>
+                    <div class="output-row">
+                        <span class="output-label">Projected Timber & Resin Valuation</span>
+                        <span class="output-value" id="out-timber">₹1,95,00,000</span>
+                    </div>
+                    <div class="output-row">
+                        <span class="output-label">Estimated Net Capital Gain</span>
+                        <span class="output-value" style="color: #4cd964;" id="out-gain">+₹92,20,000</span>
+                    </div>
+                </div>
+
+                <div class="output-row output-total" style="margin-top: 30px; border-top: 2px solid var(--gold-primary); padding-top: 24px;">
+                    <span class="output-label" style="font-size: 1.1rem; color: #ffffff;">Total Projected Wealth</span>
+                    <span class="output-value" id="out-total">₹2,02,20,000</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 6: VIP Private Site Visit & Contact Modal -->
+    <section class="contact-section" id="contact">
+        <div class="section-header reveal-on-scroll">
+            <span class="section-tag">Private Consultation</span>
+            <h2 class="section-title">Schedule Your Private Site Visit</h2>
+            <p class="section-desc">
+                Experience the beauty of Agarland in person. Connect with our senior investment advisors for a private guided consultation and site tour.
+            </p>
+        </div>
+
+        <div class="contact-form-box reveal-on-scroll">
+            <form id="consultation-form" onsubmit="handleFormSubmit(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" class="form-control" required placeholder="Dr. / Mr. / Ms. Full Name">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone / WhatsApp *</label>
+                        <input type="tel" class="form-control" required placeholder="+91 98765 43210">
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address *</label>
+                        <input type="email" class="form-control" required placeholder="investor@domain.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Investment Preference</label>
+                        <select class="form-control">
+                            <option>Full 25-Cent Plot + Cottage (₹1.10 Cr)</option>
+                            <option>Share Investment Plan (₹1.10 Lakh)</option>
+                            <option>Undecided / Requesting Both Options</option>
+                        </select>
+                    </div>
+                    <div class="form-group full">
+                        <label>Preferred Site Visit Date / Notes</label>
+                        <input type="text" class="form-control" placeholder="E.g., Weekend visit or request for official legal dossier...">
+                    </div>
+                </div>
+                <button type="submit" class="btn-gold" style="width: 100%; justify-content: center; padding: 16px; font-size: 1rem;">
+                    <span>Request VIP Consultation & Brochure</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                </button>
+            </form>
+
+            <div id="form-success" style="display: none; text-align: center; padding: 30px; background: rgba(76, 217, 100, 0.15); border: 1px solid #4cd964; border-radius: 8px; margin-top: 20px;">
+                <h3 style="color: #4cd964; font-family: var(--font-serif); font-size: 1.8rem; margin-bottom: 8px;">Inquiry Submitted Successfully</h3>
+                <p style="color: var(--text-main);">Thank you for registering your interest with Agarland Developers. Our senior investment director will contact you via WhatsApp/phone within 2 business hours.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <svg class="footer-logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M50 10L85 75H65L50 45L35 75H15L50 10Z" stroke="#d4af37" stroke-width="4" stroke-linejoin="round"/>
+            <path d="M50 45L65 75H50V45Z" fill="#d4af37"/>
+        </svg>
+        <div style="font-family: var(--font-serif); font-size: 1.5rem; color: var(--gold-light); letter-spacing: 3px; font-weight: 700;">AGARLAND DEVELOPERS</div>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 8px;">Invest in Nature. Invest in the Future.</p>
+
+        <ul class="footer-links">
+            <li><a href="#concept">Vision</a></li>
+            <li><a href="#botanical">Oud & Sandalwood</a></li>
+            <li><a href="#returns">Return Architecture</a></li>
+            <li><a href="#amenities">Resort Amenities</a></li>
+            <li><a href="#calculator">ROI Calculator</a></li>
+            <li><a href="https://www.agarland.in" target="_blank">www.agarland.in</a></li>
+        </ul>
+
+        <div class="footer-copy">
+            &copy; 2026 Agarland Developers. All Rights Reserved. Designed to SOTD Excellence.
+        </div>
+    </footer>
+
+    <!-- Interactive JavaScript -->
+    <script>
+        // Preloader Logic
+        window.addEventListener('DOMContentLoaded', () => {
+            const fill = document.getElementById('preloader-fill');
+            const preloader = document.getElementById('preloader');
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 15) + 10;
+                if (progress >= 100) {
+                    progress = 100;
+                    fill.style.width = '100%';
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        preloader.style.opacity = '0';
+                        preloader.style.transform = 'translateY(-10%)';
+                        setTimeout(() => preloader.remove(), 800);
+                    }, 400);
+                } else {
+                    fill.style.width = progress + '%';
+                }
+            }, 120);
+
+            // Init Calculator & Canvas
+            updateCalculator();
+            initAmbientCanvas();
+        });
+
+        // Sticky Navbar
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 80) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Scroll Reveal Animation
+        const revealElements = document.querySelectorAll('.reveal-on-scroll');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                }
+            });
+        }, { threshold: 0.15 });
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // Tab Switching & Botanical SVG Animation
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+
+            const artWrap = document.getElementById('botanical-art');
+            const artLabel = document.getElementById('botanical-art-label');
+            if (tabId === 'agarwood') {
+                artLabel.textContent = 'Agarwood (Oud) Specimen';
+                artWrap.innerHTML = `
+                    <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="100" cy="100" r="85" stroke="#d4af37" stroke-width="2" stroke-dasharray="8 8"/>
+                        <circle cx="100" cy="100" r="65" stroke="#d4af37" stroke-width="1.5" opacity="0.6"/>
+                        <path d="M100 35C100 35 135 65 135 100C135 120 120 135 100 135C80 135 65 120 65 100C65 65 100 35 100 35Z" fill="rgba(212, 175, 55, 0.25)" stroke="#d4af37" stroke-width="2.5"/>
+                        <path d="M100 65V125M85 95L100 80L115 95" stroke="#f3e5ab" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                `;
+            } else {
+                artLabel.textContent = 'Indian Sandalwood Specimen';
+                artWrap.innerHTML = `
+                    <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="100" cy="100" r="85" stroke="#d4af37" stroke-width="2"/>
+                        <circle cx="100" cy="100" r="60" stroke="#d4af37" stroke-width="2" stroke-dasharray="6 6"/>
+                        <circle cx="100" cy="100" r="35" stroke="#d4af37" stroke-width="2"/>
+                        <path d="M100 30L100 170M30 100L170 100M50 50L150 150M150 50L50 150" stroke="rgba(212, 175, 55, 0.3)" stroke-width="1"/>
+                    </svg>
+                `;
+            }
+        }
+
+        // Plan Switching
+        function switchPlan(planId, btn) {
+            document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.plan-view').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(planId).classList.add('active');
+        }
+
+        // Amenities Filtering
+        function filterAmenities(category, btn) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const cards = document.querySelectorAll('.amenity-card');
+            cards.forEach(card => {
+                if (category === 'all' || card.getAttribute('data-category') === category) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Interactive Financial Calculator
+        function formatINR(amount) {
+            if (amount >= 10000000) {
+                return '₹' + (amount / 10000000).toFixed(2) + ' Crore';
+            } else if (amount >= 100000) {
+                return '₹' + (amount / 100000).toFixed(2) + ' Lakhs';
+            } else {
+                return '₹' + amount.toLocaleString('en-IN');
+            }
+        }
+
+        function updateCalculator() {
+            const tierVal = parseInt(document.getElementById('calc-tier').value);
+            const yearsVal = parseInt(document.getElementById('calc-years').value);
+            const scenarioVal = parseFloat(document.getElementById('calc-scenario').value);
+            const sharesGroup = document.getElementById('shares-group');
+
+            document.getElementById('years-label').textContent = yearsVal + ' Years';
+
+            let capital = tierVal;
+            let interimPerYear = 180000; // ₹1.80 Lakh / year for full plot post year 1
+            let timberBase = 19500000; // ₹1.95 Crore
+
+            if (tierVal === 110000) {
+                sharesGroup.style.display = 'block';
+                const shares = parseInt(document.getElementById('calc-shares').value);
+                document.getElementById('shares-label').textContent = shares + ' Share(s) (₹' + (shares * 1.1).toFixed(2) + ' Lakhs)';
+                capital = shares * 110000;
+                // Share plan receives pro-rata dividend based on 100 shares per plot equivalent
+                interimPerYear = shares * (180000 / 100);
+                timberBase = shares * (19500000 / 100);
+            } else {
+                sharesGroup.style.display = 'none';
+            }
+
+            // Interim revenue calculation: year 1 is grace period, years 2+ generate revenue
+            const revenueYears = Math.max(0, yearsVal - 1);
+            const totalInterim = revenueYears * interimPerYear;
+            const totalTimber = timberBase * scenarioVal;
+            const totalWealth = totalInterim + totalTimber;
+            const netGain = totalWealth - capital;
+
+            document.getElementById('out-capital').textContent = formatINR(capital);
+            document.getElementById('out-interim').textContent = formatINR(totalInterim);
+            document.getElementById('out-timber').textContent = formatINR(totalTimber);
+            document.getElementById('out-total').textContent = formatINR(totalWealth);
+            
+            const gainEl = document.getElementById('out-gain');
+            if (netGain >= 0) {
+                gainEl.textContent = '+' + formatINR(netGain);
+                gainEl.style.color = '#4cd964';
+            } else {
+                gainEl.textContent = formatINR(netGain);
+                gainEl.style.color = '#ff3b30';
+            }
+        }
+
+        // Consultation Form Handler
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            document.getElementById('consultation-form').style.display = 'none';
+            document.getElementById('form-success').style.display = 'block';
+        }
+
+        // Ambient Particles Canvas (Fireflies effect)
+        function initAmbientCanvas() {
+            const canvas = document.getElementById('ambient-canvas');
+            const ctx = canvas.getContext('2d');
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
+
+            window.addEventListener('resize', () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            });
+
+            const particles = [];
+            const count = 45;
+
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    radius: Math.random() * 2 + 0.8,
+                    speedX: (Math.random() - 0.5) * 0.4,
+                    speedY: (Math.random() - 0.5) * 0.4,
+                    alpha: Math.random() * 0.6 + 0.2
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+                particles.forEach(p => {
+                    p.x += p.speedX;
+                    p.y += p.speedY;
+
+                    if (p.x < 0) p.x = width;
+                    if (p.x > width) p.x = 0;
+                    if (p.y < 0) p.y = height;
+                    if (p.y > height) p.y = 0;
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(212, 175, 55, ' + p.alpha + ')';
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = '#d4af37';
+                    ctx.fill();
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.24/dist/lenis.min.js"></script>
+    <script>
+        const lenis = new Lenis({ autoRaf: true });
+    </script>
+</body>
+</html>
