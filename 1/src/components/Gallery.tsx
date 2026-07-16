@@ -1,6 +1,18 @@
 import { memo } from "react";
 import { useReveal } from "../utils/useReveal";
 
+const galleryItems = [
+  { src: "/images/01_ayurvedic.jpg", alt: "Ayurvedic wellness centre in the resort", caption: "Ayurvedic Centre", wide: false, tall: false },
+  { src: "/images/03_cottage.jpg", alt: "Traditional Kerala-style luxury cottage", caption: "Luxury Cottage", wide: false, tall: false },
+  { src: "/images/04_honey.jpg", alt: "Organic honey museum and apiculture", caption: "Honey Museum", wide: false, tall: false },
+  { src: "/images/05_restaurant.jpg", alt: "Multi-cuisine farm-to-table restaurant", caption: "Restaurant", wide: true, tall: false },
+  { src: "/images/06_event.jpg", alt: "Event space and banquet hall", caption: "Event Space", wide: false, tall: false },
+  { src: "/images/07_fishing.jpg", alt: "Peaceful fishing spot with natural water bodies", caption: "Fishing Spot", wide: false, tall: false },
+  { src: "/images/08_park.jpg", alt: "Children's nature-integrated park", caption: "Children's Park", wide: false, tall: false },
+  { src: "/images/09_farming.jpg", alt: "Organic farming and agriculture area", caption: "Organic Farming", wide: false, tall: false },
+  { src: "/images/10_plantation.jpg", alt: "Agarwood and Sandalwood plantation rows", caption: "The Plantation", wide: false, tall: false },
+];
+
 const Gallery = memo(function Gallery() {
   const sectionRef = useReveal(".reveal, .gallery__item");
 
@@ -20,22 +32,16 @@ const Gallery = memo(function Gallery() {
         </div>
 
         <div className="gallery__grid">
-          <figure className="gallery__item gallery__item--wide reveal stagger" data-delay="0">
-            <img src="/images/kerala-estate-aerial.jpg" alt="Aerial view of the resort estate in the Western Ghats" loading="lazy" />
-            <figcaption>The Estate · Aerial</figcaption>
-          </figure>
-          <figure className="gallery__item reveal stagger" data-delay="120">
-            <img src="/images/cottage.jpg" alt="Traditional Kerala-style cottage in the plantation" loading="lazy" />
-            <figcaption>The Cottage</figcaption>
-          </figure>
-          <figure className="gallery__item reveal stagger" data-delay="240">
-            <img src="/images/plantation.jpg" alt="Agarwood and sandalwood plantation rows" loading="lazy" />
-            <figcaption>The Plantation</figcaption>
-          </figure>
-          <figure className="gallery__item gallery__item--tall reveal stagger" data-delay="360">
-            <img src="/images/amenities.jpg" alt="Infinity swimming pool at dusk overlooking the forest" loading="lazy" />
-            <figcaption>The Pool · Dusk</figcaption>
-          </figure>
+          {galleryItems.map((item, i) => (
+            <figure
+              key={item.src}
+              className={`gallery__item reveal stagger${item.wide ? " gallery__item--wide" : ""}${item.tall ? " gallery__item--tall" : ""}`}
+              data-delay={i * 80}
+            >
+              <img src={item.src} alt={item.alt} loading="lazy" />
+              <figcaption>{item.caption}</figcaption>
+            </figure>
+          ))}
         </div>
       </div>
     </section>
