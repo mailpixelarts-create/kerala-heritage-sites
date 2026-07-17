@@ -15,7 +15,7 @@ const Footer = memo(function Footer() {
           </div>
           <div className="footer__col">
             <h4 className="footer__label">Contact</h4>
-            <a href="mailto:hello@agarlan.in" className="footer__link">hello@agarland.in</a>
+            <a href="mailto:hello@agarland.in" className="footer__link">hello@agarland.in</a>
             <a href="https://www.agarland.in" target="_blank" rel="noopener noreferrer" className="footer__link">www.agarland.in</a>
           </div>
           <div className="footer__col">
@@ -26,8 +26,9 @@ const Footer = memo(function Footer() {
           </div>
         </div>
         <div className="footer__bottom">
-          <span>© 2025 Agarland Developers · Kerala Heritage</span>
-          <span>Committed to a green legacy</span>
+          <p className="footer__copyright">© 2026 Norman James. All rights reserved.</p>
+          <p className="footer__credits">MADE WITH LOVE <span className="footer__heart">♥</span> BY EMPATHY STUDIO & Phasing East Hospitality</p>
+          <p className="footer__phones">+91 98332 74308 / +91 98332 74305 / +91 79943 97927</p>
         </div>
       </div>
     </footer>

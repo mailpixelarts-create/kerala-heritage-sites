@@ -76,8 +76,9 @@ export default function Hero() {
                   target={110000}
                   prefix="₹"
                   format={(v: number) => `₹${v.toLocaleString("en-IN")}`}
-                  duration={2200}
-                  delay={800}
+                  duration={2640}
+                  delay={3600}
+                  start={true}
                 />
               </div>
               <p className="hero__price-note">Starting at, per share</p>

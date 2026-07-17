@@ -88,22 +88,73 @@ const Gallery = memo(function Gallery() {
           duration: 1,
           stagger: 0.15,
           ease: "power3.out",
-          scrollTrigger: { trigger: header, start: "top 80%" },
         }
       );
     }
 
-    // Parallax scroll for stacked cards
+    // Image entrance — staggered reveal on load
+    const entered = new Set<number>();
+    const revealCard = (i: number) => {
+      if (entered.has(i) || !cards[i]) return;
+      entered.add(i);
+      const card = cards[i];
+      const img = card.querySelector("img");
+      const content = card.querySelector<HTMLElement>(".gallery__card-content");
+
+      gsap.fromTo(
+        card,
+        { opacity: 0, y: 60 },
+        { opacity: 1, y: 0, duration: 1, delay: i * 0.08, ease: "power3.out" }
+      );
+
+      if (img) {
+        gsap.fromTo(
+          img,
+          { scale: 1.15, opacity: 0 },
+          { scale: 1, opacity: 1, duration: 1.2, delay: i * 0.08 + 0.1, ease: "power2.out" }
+        );
+      }
+
+      if (content) {
+        gsap.fromTo(
+          content.querySelectorAll("h3, p"),
+          { opacity: 0, y: 20, filter: "blur(4px)" },
+          {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            duration: 0.9,
+            stagger: 0.12,
+            delay: i * 0.08 + 0.3,
+            ease: "power3.out",
+          }
+        );
+      }
+    };
+
+    // Reveal cards in view
+    const checkVisibility = () => {
+      cards.forEach((card, i) => {
+        const rect = card.getBoundingClientRect();
+        if (rect.top < window.innerHeight * 0.85) {
+          revealCard(i);
+        }
+      });
+    };
+    checkVisibility();
+
+    // Parallax scroll for stacked cards — NO rotation, straight cards
     let raf: number;
     const tick = () => {
       const sectionRect = section.getBoundingClientRect();
       const vh = window.innerHeight;
 
-      // Only animate when section is in view
       if (sectionRect.bottom < -200 || sectionRect.top > vh + 200) {
         raf = requestAnimationFrame(tick);
         return;
       }
+
+      checkVisibility();
 
       const sectionProgress = Math.max(
         0,
@@ -112,14 +163,10 @@ const Gallery = memo(function Gallery() {
 
       cards.forEach((card, i) => {
         const offset = i - cards.length / 2;
-        const parallaxY = offset * 12 * (1 - sectionProgress * 0.5);
-        const rotation = offset * 0.4;
-        const scale = 1 - Math.abs(offset) * 0.02;
+        const parallaxY = offset * 10 * (1 - sectionProgress * 0.4);
 
         gsap.set(card, {
           y: parallaxY,
-          rotateZ: rotation,
-          scale: Math.max(0.92, scale),
         });
       });
 

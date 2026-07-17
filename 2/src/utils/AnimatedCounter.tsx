@@ -7,6 +7,7 @@ export default memo(function AnimatedCounter({
   format,
   duration = 2000,
   delay = 0,
+  start,
 }: {
   target: number;
   prefix?: string;
@@ -14,40 +15,50 @@ export default memo(function AnimatedCounter({
   format?: (v: number) => string;
   duration?: number;
   delay?: number;
+  start?: boolean;
 }) {
   const [display, setDisplay] = useState(0);
-  const [visible, setVisible] = useState(false);
+  const [triggered, setTriggered] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.3 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
+  // Mode 1: explicit start prop
+  // Mode 2: IntersectionObserver (default)
+  const useObserver = start === undefined;
 
   useEffect(() => {
-    if (!visible) return;
-    const start = performance.now() + delay;
-    let raf = 0;
+    if (useObserver) {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setTriggered(true);
+            observer.disconnect();
+          }
+        },
+        { threshold: 0.3 }
+      );
+      if (ref.current) observer.observe(ref.current);
+      return () => observer.disconnect();
+    }
+  }, [useObserver]);
 
-    const tick = (now: number) => {
-      const elapsed = Math.max(0, now - start);
-      const progress = Math.min(elapsed / duration, 1);
-      const ease = 1 - Math.pow(1 - progress, 4);
-      setDisplay(ease * target);
-      if (progress < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [visible, target, duration, delay]);
+  useEffect(() => {
+    const shouldStart = useObserver ? triggered : start;
+    if (!shouldStart) return;
+
+    const timeout = setTimeout(() => {
+      const startTime = performance.now();
+      const tick = (now: number) => {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const ease = 1 - Math.pow(1 - progress, 4);
+        setDisplay(ease * target);
+        if (progress < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }, delay);
+
+    return () => clearTimeout(timeout);
+  }, [triggered, start, useObserver, target, duration, delay]);
 
   const rendered = format
     ? format(Math.round(display))
