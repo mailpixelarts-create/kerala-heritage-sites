@@ -79,7 +79,7 @@ const Amenities = memo(function Amenities() {
           </div>
           <div className="reveal stagger" data-delay="120">
             <h2 id="amenities-title" className="amenities__title">
-              Nine Amenities,
+              many Amenities,
               <span className="amenities__title-accent"> One Sanctuary</span>
             </h2>
           </div>

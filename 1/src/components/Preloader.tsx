@@ -1,36 +1,22 @@
-import { useEffect, useRef, useState, memo } from "react";
+import { useEffect, useState, memo } from "react";
 
 const Preloader = memo(function Preloader({ onDone }: { onDone: () => void }) {
-  const [progress, setProgress] = useState(0);
   const [phase, setPhase] = useState<"loading" | "revealing" | "done">("loading");
-  const counterRef = useRef<number>(0);
-  const rafRef = useRef<number>(0);
 
   useEffect(() => {
-    const duration = 1800;
-    const start = performance.now();
+    const t1 = setTimeout(() => {
+      onDone();
+      setPhase("revealing");
+    }, 2000);
 
-    const animate = (now: number) => {
-      const elapsed = now - start;
-      const rawProgress = Math.min(elapsed / duration, 1);
-      // Ease-out quad for smooth deceleration
-      const eased = 1 - (1 - rawProgress) * (1 - rawProgress);
-      counterRef.current = Math.round(eased * 100);
-      setProgress(counterRef.current);
+    const t2 = setTimeout(() => {
+      setPhase("done");
+    }, 3200);
 
-      if (rawProgress < 1) {
-        rafRef.current = requestAnimationFrame(animate);
-      } else {
-        setPhase("revealing");
-        setTimeout(() => {
-          setPhase("done");
-          setTimeout(onDone, 600);
-        }, 800);
-      }
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
     };
-
-    rafRef.current = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(rafRef.current);
   }, [onDone]);
 
   if (phase === "done") return null;
@@ -38,14 +24,13 @@ const Preloader = memo(function Preloader({ onDone }: { onDone: () => void }) {
   return (
     <div className={`preloader ${phase === "revealing" ? "preloader--revealing" : ""}`}>
       <div className="preloader__inner">
-        <span className="preloader__counter" aria-live="polite" aria-label={`Loading ${progress} percent`}>
-          {progress}
-        </span>
+        <div className="preloader__stroke-counter">
+          <span className="preloader__stroke-text preloader__count-up" />
+          <span className="preloader__stroke-outline preloader__count-outline" />
+        </div>
+        <span className="preloader__percent">%</span>
         <div className="preloader__track">
-          <div
-            className="preloader__fill"
-            style={{ width: `${progress}%` }}
-          />
+          <div className="preloader__fill preloader__fill-animate" />
         </div>
       </div>
     </div>

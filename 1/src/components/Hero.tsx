@@ -29,11 +29,14 @@ export default function Hero() {
     document.documentElement.addEventListener("mouseleave", handleLeave);
     window.addEventListener("scroll", handleScroll, { passive: true });
 
-    // Hero elements are always in view on load, reveal them
+    // Delay hero reveal to sync with site-content fade-in
     const revealElements = hero.querySelectorAll(".reveal");
-    revealElements.forEach((el) => el.classList.add("is-visible"));
+    const timer = setTimeout(() => {
+      revealElements.forEach((el) => el.classList.add("is-visible"));
+    }, 200);
 
     return () => {
+      clearTimeout(timer);
       window.removeEventListener("pointermove", handleMove);
       document.documentElement.removeEventListener("mouseleave", handleLeave);
       window.removeEventListener("scroll", handleScroll);
@@ -76,7 +79,7 @@ export default function Hero() {
                   target={110000}
                   prefix="₹"
                   format={(v: number) => `₹${v.toLocaleString("en-IN")}`}
-                  duration={2200}
+                  duration={2640}
                   delay={800}
                 />
               </div>

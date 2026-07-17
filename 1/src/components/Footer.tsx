@@ -48,8 +48,9 @@ const Footer = memo(function Footer() {
         </div>
 
         <div className="footer__bottom">
-          <span>© {new Date().getFullYear()} Agarland Developers</span>
-          <span>Investments carry risk · Please review the prospectus</span>
+          <p className="footer__copyright">© 2026 Norman James. All rights reserved.</p>
+          <p className="footer__credits">MADE WITH LOVE <span className="footer__heart">♥</span> BY EMPATHY STUDIO & Phasing East Hospitality</p>
+          <p className="footer__phones">+91 98332 74308 / +91 98332 74305 / +91 79943 97927</p>
         </div>
       </div>
     </footer>
