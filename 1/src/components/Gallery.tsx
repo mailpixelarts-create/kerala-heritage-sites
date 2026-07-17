@@ -117,17 +117,42 @@ const Gallery = memo(function Gallery() {
 
     // ── Scroll events ──
     const onWheel = (e: WheelEvent) => {
+      // Only intercept horizontal scroll or strong vertical on desktop
+      const isVertical = Math.abs(e.deltaY) > Math.abs(e.deltaX);
+      if (isVertical && window.innerWidth < 768) return; // let mobile page scroll
       e.preventDefault();
-      targetRef.current += e.deltaY * 0.8;
+      targetRef.current += (e.deltaY || e.deltaX) * 0.8;
     };
 
-    let touchX = 0;
-    const onTouchStart = (e: TouchEvent) => { touchX = e.touches[0].clientX; };
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let swiping: "h" | "v" | null = null;
+
+    const onTouchStart = (e: TouchEvent) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      swiping = null;
+    };
+
     const onTouchMove = (e: TouchEvent) => {
+      const dx = touchStartX - e.touches[0].clientX;
+      const dy = touchStartY - e.touches[0].clientY;
+
+      // Determine direction on first significant movement
+      if (swiping === null) {
+        if (Math.abs(dx) > 8 || Math.abs(dy) > 8) {
+          swiping = Math.abs(dx) > Math.abs(dy) ? "h" : "v";
+        }
+        return;
+      }
+
+      // If vertical swipe, let the page scroll naturally
+      if (swiping === "v") return;
+
+      // Horizontal swipe — control gallery
       e.preventDefault();
-      const dx = touchX - e.touches[0].clientX;
       targetRef.current += dx * 1.5;
-      touchX = e.touches[0].clientX;
+      touchStartX = e.touches[0].clientX;
     };
 
     wrapper.addEventListener("wheel", onWheel, { passive: false });
@@ -211,10 +236,13 @@ const Gallery = memo(function Gallery() {
     };
   }, []);
 
-  // Lenis toggle
+  // Lenis toggle — only on desktop where gallery captures wheel
   useEffect(() => {
     const wrapper = wrapperRef.current;
     if (!wrapper) return;
+    // On mobile, don't disable Lenis — let page scroll naturally
+    if (window.innerWidth < 768) return;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && !lenisDisabledRef.current) {
