@@ -15,6 +15,7 @@ import Disclosures from "./components/Disclosures";
 import CTA from "./components/CTA";
 import Footer from "./components/Footer";
 import NoiseOverlay from "./components/NoiseOverlay";
+import BackToTop from "./components/BackToTop";
 
 export default function App() {
   const [loaded, setLoaded] = useState(false);
@@ -51,6 +52,7 @@ export default function App() {
         </main>
         <Footer />
       </div>
+      <BackToTop />
     </>
   );
 }
