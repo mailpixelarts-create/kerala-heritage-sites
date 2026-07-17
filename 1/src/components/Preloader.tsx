@@ -1,37 +1,28 @@
-import { useEffect, useState, memo } from "react";
+import { useEffect, useRef, useState, memo } from "react";
 
-const Preloader = memo(function Preloader({ onDone }: { onDone: () => void }) {
-  const [phase, setPhase] = useState<"loading" | "revealing" | "done">("loading");
+const Preloader = memo(function Preloader({ onComplete }: { onComplete: () => void }) {
+  const [visible, setVisible] = useState(true);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
-    const t1 = setTimeout(() => {
-      onDone();
-      setPhase("revealing");
-    }, 2000);
-
-    const t2 = setTimeout(() => {
-      setPhase("done");
+    // Wait for CSS animation to finish (2s count + 1s fade), then tell parent
+    timerRef.current = setTimeout(() => {
+      setVisible(false);
+      onComplete();
     }, 3200);
 
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-    };
-  }, [onDone]);
+    return () => clearTimeout(timerRef.current);
+  }, [onComplete]);
 
-  if (phase === "done") return null;
+  if (!visible) return null;
 
   return (
-    <div className={`preloader ${phase === "revealing" ? "preloader--revealing" : ""}`}>
+    <div className="preloader" aria-label="Loading">
       <div className="preloader__inner">
-        <div className="preloader__stroke-counter">
-          <span className="preloader__stroke-text preloader__count-up" />
-          <span className="preloader__stroke-outline preloader__count-outline" />
+        <div className="preloader__counter">
+          <span className="preloader__counter-fill" />
         </div>
-        <span className="preloader__percent">%</span>
-        <div className="preloader__track">
-          <div className="preloader__fill preloader__fill-animate" />
-        </div>
+        <p className="preloader__tagline">Kerala Heritage</p>
       </div>
     </div>
   );

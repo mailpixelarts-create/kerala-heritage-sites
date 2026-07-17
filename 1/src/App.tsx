@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
+import Preloader from "./components/Preloader";
 import CustomCursor from "./components/CustomCursor";
 import Navigation from "./components/Navigation";
 import ScrollProgress from "./components/ScrollProgress";
@@ -16,18 +17,14 @@ import NoiseOverlay from "./components/NoiseOverlay";
 import BackToTop from "./components/BackToTop";
 
 export default function App() {
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    // Small delay so the page renders first, then fades in
-    const t = setTimeout(() => setReady(true), 100);
-    return () => clearTimeout(t);
-  }, []);
+  const [loaded, setLoaded] = useState(false);
+  const onComplete = useCallback(() => setLoaded(true), []);
 
   return (
     <>
       <CustomCursor />
-      <div className={`site-content ${ready ? "site-content--visible" : ""}`}>
+      {!loaded && <Preloader onComplete={onComplete} />}
+      <div className={`site-content ${loaded ? "site-content--visible" : ""}`}>
         <NoiseOverlay />
         <Navigation />
         <ScrollProgress />
