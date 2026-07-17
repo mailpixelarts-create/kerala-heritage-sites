@@ -1,23 +1,27 @@
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
 
 const Navigation = memo(function Navigation() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 80);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header className="nav">
+    <header className={`nav ${scrolled ? "nav--scrolled" : ""}`}>
       <div className="nav__inner">
-        <div className="nav__brand">
-          <svg className="nav__logo" viewBox="0 0 28 28" aria-hidden="true">
-            <path d="M14 2L2 14l12 12L26 14Z" fill="none" stroke="currentColor" strokeWidth="1.2" />
-            <path d="M14 7l-5 7 5 7 5-7Z" fill="currentColor" opacity="0.35" />
-          </svg>
+        <a href="#estate" className="nav__brand">
           <span className="nav__name">Kerala Heritage</span>
-        </div>
+        </a>
         <nav className="nav__links">
           <a href="#estate" className="nav__link">Vision</a>
           <a href="#details" className="nav__link">Details</a>
           <a href="#legacy" className="nav__link">Plantation</a>
           <a href="#disclosures" className="nav__link">Notes</a>
-          <button type="button" className="nav__cta">Inquire</button>
         </nav>
+        <button type="button" className="nav__cta">Inquire</button>
       </div>
     </header>
   );
